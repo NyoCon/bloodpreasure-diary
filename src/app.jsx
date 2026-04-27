@@ -1,5 +1,7 @@
 function App() {
-  const [lang, setLang] = React.useState("en");
+  const [lang, setLang] = React.useState(() => localStorage.getItem("lang") || "en");
+
+  const changeLang = (l) => { localStorage.setItem("lang", l); setLang(l); };
   const t = I18N[lang];
 
   const [entries, setEntries] = React.useState([]);
@@ -121,9 +123,9 @@ function App() {
         <div className="topbar-actions">
           <div className="lang-switch" role="radiogroup" aria-label="Language">
             <button type="button" className={lang === "en" ? "lang on" : "lang"}
-                    onClick={() => setLang("en")}>EN</button>
+                    onClick={() => changeLang("en")}>EN</button>
             <button type="button" className={lang === "de" ? "lang on" : "lang"}
-                    onClick={() => setLang("de")}>DE</button>
+                    onClick={() => changeLang("de")}>DE</button>
           </div>
           <button type="button" className="btn ghost" onClick={() => setShowMeasure(true)}
                   aria-label={t.howTo} title={t.howTo}>

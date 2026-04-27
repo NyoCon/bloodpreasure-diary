@@ -234,6 +234,8 @@ function FilterBar({ filters, setFilters, t, lang, total, shown }) {
     } else if (key === "30") {
       const d = new Date(today); d.setDate(d.getDate() - 29);
       from = toISODate(d.getTime());
+    } else if (key === "custom") {
+      from = toISODate(today.getTime());
     }
     const to = key === "all" ? "" : toISODate(today.getTime());
     setFilters({ ...filters, from, to, quickRange: key });
@@ -266,10 +268,12 @@ function FilterBar({ filters, setFilters, t, lang, total, shown }) {
           <div className="filter-group">
             <label className="filter-lbl">{t.from}</label>
             <input type="date" className="input small" value={filters.from}
-                   onChange={(e) => setField("from", e.target.value)} />
+                   onChange={(e) => setField("from", e.target.value)}
+                   onClick={(e) => e.target.showPicker?.()}  />
             <label className="filter-lbl">{t.to}</label>
             <input type="date" className="input small" value={filters.to}
-                   onChange={(e) => setField("to", e.target.value)} />
+                   onChange={(e) => setField("to", e.target.value)}
+                   onClick={(e) => e.target.showPicker?.()}  />
           </div>
         )}
 
