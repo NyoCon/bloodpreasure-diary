@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+      - "35729:35729"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - db-data:/app/data
+
+volumes:
+  db-data:
