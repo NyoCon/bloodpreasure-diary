@@ -1,4 +1,4 @@
-const CACHE = "bp-diary-v1";
+const CACHE = "bp-diary-v3";
 const SHELL = [
   "/",
   "/index.html",

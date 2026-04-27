@@ -115,11 +115,13 @@ function EntryFormModal({ open, onClose, onSave, editing, t, lang }) {
             <label className="field">
               <span className="field-lbl">{t.date}</span>
               <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+                     onClick={(e) => e.target.showPicker?.()}
                      className={err.date ? "input err" : "input"} />
             </label>
             <label className="field">
               <span className="field-lbl">{t.time}</span>
               <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+                     onClick={(e) => e.target.showPicker?.()}
                      className={err.time ? "input err" : "input"} />
             </label>
           </div>
