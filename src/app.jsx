@@ -151,33 +151,35 @@ function App() {
       </header>
 
       <main className="content">
-        <SummaryCards entries={filtered} t={t} />
-
-        <section className="panel">
-          <div className="panel-hd">
-            <h2>{t.chart}</h2>
-          </div>
-          <TrendChart entries={filtered} t={t} lang={lang} showCategories={true} />
-        </section>
-
-        <section className="panel">
-          <div className="panel-hd">
-            <h2>{t.list}</h2>
-          </div>
-          <FilterBar filters={filters} setFilters={setFilters} t={t} lang={lang}
-                     total={entries.length} shown={filtered.length} />
-          <EntriesTable entries={filtered} sortKey={filters.sortKey} sortDir={filters.sortDir}
-                        setSort={setSort} onEdit={openEdit} onDelete={handleDelete}
-                        density="compact" showCategories={true}
-                        t={t} lang={lang} />
-        </section>
-
-        {entries.length === 0 && (
+        {entries.length === 0 ? (
           <div className="empty-state big">
             <h3>{t.noEntries}</h3>
             <p>{t.noEntriesHint}</p>
             <button type="button" className="btn primary" onClick={openNew}>{t.newEntry}</button>
           </div>
+        ) : (
+          <>
+            <SummaryCards entries={filtered} t={t} />
+
+            <section className="panel">
+              <div className="panel-hd">
+                <h2>{t.chart}</h2>
+              </div>
+              <TrendChart entries={filtered} t={t} lang={lang} showCategories={true} />
+            </section>
+
+            <section className="panel">
+              <div className="panel-hd">
+                <h2>{t.list}</h2>
+              </div>
+              <FilterBar filters={filters} setFilters={setFilters} t={t} lang={lang}
+                         total={entries.length} shown={filtered.length} />
+              <EntriesTable entries={filtered} sortKey={filters.sortKey} sortDir={filters.sortDir}
+                            setSort={setSort} onEdit={openEdit} onDelete={handleDelete}
+                            density="compact" showCategories={true}
+                            t={t} lang={lang} />
+            </section>
+          </>
         )}
       </main>
 
