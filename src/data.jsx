@@ -288,7 +288,55 @@ function relativeDay(ts, lang, t) {
   return formatDate(ts, lang);
 }
 
+// ── IndexedDB ───────────────────────────────────────────────────────────────
+const DB_NAME = "bp-diary";
+const DB_VERSION = 1;
+const STORE_NAME = "entries";
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        const store = db.createObjectStore(STORE_NAME, { keyPath: "id" });
+        store.createIndex("ts", "ts");
+      }
+    };
+    req.onsuccess = (e) => resolve(e.target.result);
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+
+function dbGetAll() {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const req = tx.objectStore(STORE_NAME).getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  }));
+}
+
+function dbPut(entry) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const req = tx.objectStore(STORE_NAME).put(entry);
+    req.onsuccess = () => resolve(entry);
+    req.onerror = () => reject(req.error);
+  }));
+}
+
+function dbDelete(id) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const req = tx.objectStore(STORE_NAME).delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  }));
+}
+
 Object.assign(window, {
   I18N, MEASURE_TIPS, CATEGORIES, categorize, buildSeed,
   toISODate, toISOTime, fromInputs, formatDate, formatTime, relativeDay,
+  dbGetAll, dbPut, dbDelete,
 });

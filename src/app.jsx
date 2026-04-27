@@ -8,8 +8,7 @@ function App() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    fetch('/api/entries')
-      .then(r => r.json())
+    dbGetAll()
       .then(data => { setEntries(data); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
@@ -73,25 +72,17 @@ function App() {
   };
 
   const handleSave = (entry) => {
-    const isNew = !entries.find(e => e.id === entry.id);
-    fetch(isNew ? '/api/entries' : `/api/entries/${entry.id}`, {
-      method: isNew ? 'POST' : 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(entry),
-    })
-      .then(r => r.json())
-      .then(saved => setEntries(prev => {
-        const idx = prev.findIndex(e => e.id === saved.id);
-        if (idx >= 0) { const next = [...prev]; next[idx] = saved; return next; }
-        return [saved, ...prev];
-      }));
+    dbPut(entry).then(saved => setEntries(prev => {
+      const idx = prev.findIndex(e => e.id === saved.id);
+      if (idx >= 0) { const next = [...prev]; next[idx] = saved; return next; }
+      return [saved, ...prev];
+    }));
     setEditing(null);
   };
 
   const handleDelete = (entry) => {
     if (window.confirm(t.confirmDelete)) {
-      fetch(`/api/entries/${entry.id}`, { method: 'DELETE' })
-        .then(() => setEntries(prev => prev.filter(e => e.id !== entry.id)));
+      dbDelete(entry.id).then(() => setEntries(prev => prev.filter(e => e.id !== entry.id)));
     }
   };
 
