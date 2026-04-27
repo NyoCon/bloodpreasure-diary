@@ -2,15 +2,15 @@
 
 ## [0.1.0] – 2026-04-27
 
-### Hinzugefügt
+### Added
 
-- Messungen erfassen mit Datum, Uhrzeit, SYS, DIA, Puls (optional) und Kommentar
-- Automatische Kategorisierung nach ESH/ESC-Leitlinien (Optimal, Normal, Hoch-normal, Grad 1–3, Niedrig)
-- Trenddiagramm (SYS / DIA / PUL) mit Hover-Tooltip und Schwellenwert-Bändern
-- Filterung nach Zeitraum (7 Tage, 30 Tage, Gesamt, benutzerdefiniert) und Werten (SYS/DIA/PUL)
-- Sortierbare Eintrags-Tabelle
-- Zusammenfassungskarten mit Durchschnittswerten
-- PDF-Export mit optionalem Diagramm und Kategorie-Spalte
-- Anleitung zur korrekten Blutdruckmessung (7 Schritte)
-- Zweisprachige Oberfläche (Deutsch / Englisch)
-- Betrieb als Docker-Container mit SQLite-Datenbank und Hot Reload
+- Log readings with date, time, SYS, DIA, pulse (optional) and a comment
+- Automatic categorisation according to ESH/ESC guidelines (Optimal, Normal, High-normal, Grade 1–3, Low)
+- Trend chart (SYS / DIA / PUL) with hover tooltip and threshold bands
+- Filtering by time range (7 days, 30 days, all time, custom) and by value (SYS/DIA/PUL)
+- Sortable entries table
+- Summary cards showing average values
+- PDF export with optional chart and category column
+- How-to-measure guide (7 steps)
+- Bilingual interface (English / German)
+- Docker container setup with SQLite database and hot reload

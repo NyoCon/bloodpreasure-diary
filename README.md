@@ -1,25 +1,25 @@
-# Blutdruck Tagebuch
+# Blood Pressure Diary
 
-Persönliches Blutdrucktagebuch als Web-App. Messungen erfassen, filtern, als Trend visualisieren und als PDF exportieren. Zweisprachig (DE/EN), kategorisiert nach ESH/ESC-Leitlinien.
+A personal blood pressure diary web app. Log readings, filter and visualise trends, and export to PDF. Bilingual (EN/DE), categorised according to ESH/ESC guidelines.
 
-## Betrieb mit Docker
+## Running with Docker
 
-### Voraussetzungen
+### Requirements
 
 - Docker
 - Docker Compose
 
-### Starten
+### Start
 
 ```bash
 docker compose up --build
 ```
 
-Die App ist anschließend unter [http://localhost:8080](http://localhost:8080) erreichbar.
+The app is then available at [http://localhost:8080](http://localhost:8080).
 
-Beim ersten Start wird die Datenbank automatisch mit Demo-Einträgen befüllt.
+On first launch the database is automatically seeded with demo entries.
 
-### Stoppen
+### Stop
 
 ```bash
 docker compose down
@@ -27,15 +27,15 @@ docker compose down
 
 ---
 
-## Datenpersistenz
+## Data Persistence
 
-### Standard: Docker Named Volume
+### Default: Docker Named Volume
 
-Standardmäßig speichert die App die SQLite-Datenbank in einem Docker-verwalteten Volume (`db-data`). Die Daten bleiben erhalten, solange das Volume existiert — also auch nach einem `docker compose down`. Erst `docker compose down -v` löscht das Volume und damit alle Daten.
+By default the app stores the SQLite database in a Docker-managed volume (`db-data`). Data is retained as long as the volume exists — including across `docker compose down`. Only `docker compose down -v` removes the volume and deletes all data.
 
-### Extern: Bind Mount auf ein Host-Verzeichnis
+### External: Bind Mount to a Host Directory
 
-Um die Datenbank an einem eigenen Ort auf dem Host zu speichern (z. B. für Backups), die `docker-compose.yml` wie folgt anpassen:
+To store the database at a specific location on the host (e.g. for backups), update `docker-compose.yml` as follows:
 
 ```yaml
 services:
@@ -43,15 +43,15 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-      - /pfad/zum/datenverzeichnis:/app/data   # ← eigenes Verzeichnis
+      - /path/to/your/data:/app/data   # ← your own directory
 
-volumes:             # ← diese Sektion kann dann entfernt werden
+volumes:             # ← this section can then be removed
   db-data:
 ```
 
-Das angegebene Verzeichnis muss existieren und beschreibbar sein. Die Datenbankdatei heißt `entries.db`.
+The specified directory must exist and be writable. The database file is named `entries.db`.
 
-**Beispiel mit einem Verzeichnis im Home-Ordner:**
+**Example using a directory in the home folder:**
 
 ```yaml
 - /home/lars/blutdruck-data:/app/data
@@ -59,12 +59,12 @@ Das angegebene Verzeichnis muss existieren und beschreibbar sein. Die Datenbankd
 
 ### Backup
 
-Die gesamte Datenbank besteht aus einer einzigen Datei:
+The entire database consists of a single file:
 
 ```bash
-# Named Volume: Datei aus dem Container kopieren
+# Named volume: copy the file out of the container
 docker cp blutdruck-tagebuch_app_1:/app/data/entries.db ./backup-entries.db
 
-# Bind Mount: Datei direkt vom Host sichern
-cp /pfad/zum/datenverzeichnis/entries.db ./backup-entries.db
+# Bind mount: copy directly from the host
+cp /path/to/your/data/entries.db ./backup-entries.db
 ```
