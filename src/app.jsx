@@ -1,15 +1,5 @@
-// app.jsx — main App component, state, filtering/sorting, layout
-
-const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "showChart": true,
-  "showCategories": true,
-  "accent": "#0d0d0d",
-  "lang": "en"
-}/*EDITMODE-END*/;
-
 function App() {
-  const [tw, setTw] = useTweaks(TWEAK_DEFAULTS);
-  const lang = tw.lang === "de" ? "de" : "en";
+  const [lang, setLang] = React.useState("en");
   const t = I18N[lang];
 
   const [entries, setEntries] = React.useState([]);
@@ -36,12 +26,6 @@ function App() {
   const [showMeasure, setShowMeasure] = React.useState(false);
   const [showExport, setShowExport] = React.useState(false);
 
-  // Apply accent dynamically
-  React.useEffect(() => {
-    document.documentElement.style.setProperty("--accent", tw.accent);
-  }, [tw.accent]);
-
-  // Filter & sort
   const filtered = React.useMemo(() => {
     let arr = entries;
     if (filters.from) {
@@ -70,7 +54,6 @@ function App() {
     const dir = filters.sortDir === "asc" ? 1 : -1;
     arr = [...arr].sort((a, b) => {
       const av = a[filters.sortKey], bv = b[filters.sortKey];
-      // Push nulls to the end regardless of direction
       if (av == null && bv == null) return 0;
       if (av == null) return 1;
       if (bv == null) return -1;
@@ -83,7 +66,7 @@ function App() {
     if (filters.sortKey === key) {
       setFilters({ ...filters, sortDir: filters.sortDir === "asc" ? "desc" : "asc" });
     } else {
-      setFilters({ ...filters, sortKey: key, sortDir: key === "ts" ? "desc" : "desc" });
+      setFilters({ ...filters, sortKey: key, sortDir: "desc" });
     }
   };
 
@@ -102,20 +85,16 @@ function App() {
       }));
     setEditing(null);
   };
+
   const handleDelete = (entry) => {
     if (window.confirm(t.confirmDelete)) {
       fetch(`/api/entries/${entry.id}`, { method: 'DELETE' })
         .then(() => setEntries(prev => prev.filter(e => e.id !== entry.id)));
     }
   };
-  const openEdit = (entry) => {
-    setEditing(entry);
-    setShowForm(true);
-  };
-  const openNew = () => {
-    setEditing(null);
-    setShowForm(true);
-  };
+
+  const openEdit = (entry) => { setEditing(entry); setShowForm(true); };
+  const openNew = () => { setEditing(null); setShowForm(true); };
 
   if (loading) {
     return (
@@ -142,9 +121,9 @@ function App() {
         <div className="topbar-actions">
           <div className="lang-switch" role="radiogroup" aria-label="Language">
             <button type="button" className={lang === "en" ? "lang on" : "lang"}
-                    onClick={() => setTw("lang", "en")}>EN</button>
+                    onClick={() => setLang("en")}>EN</button>
             <button type="button" className={lang === "de" ? "lang on" : "lang"}
-                    onClick={() => setTw("lang", "de")}>DE</button>
+                    onClick={() => setLang("de")}>DE</button>
           </div>
           <button type="button" className="btn ghost" onClick={() => setShowMeasure(true)}
                   aria-label={t.howTo} title={t.howTo}>
@@ -172,17 +151,14 @@ function App() {
       </header>
 
       <main className="content">
-        <SummaryCards entries={filtered} t={t} accent={tw.accent} />
+        <SummaryCards entries={filtered} t={t} />
 
-        {tw.showChart && (
-          <section className="panel">
-            <div className="panel-hd">
-              <h2>{t.chart}</h2>
-            </div>
-            <TrendChart entries={filtered} accent={tw.accent} t={t} lang={lang}
-                        showCategories={tw.showCategories} />
-          </section>
-        )}
+        <section className="panel">
+          <div className="panel-hd">
+            <h2>{t.chart}</h2>
+          </div>
+          <TrendChart entries={filtered} t={t} lang={lang} showCategories={true} />
+        </section>
 
         <section className="panel">
           <div className="panel-hd">
@@ -192,7 +168,7 @@ function App() {
                      total={entries.length} shown={filtered.length} />
           <EntriesTable entries={filtered} sortKey={filters.sortKey} sortDir={filters.sortDir}
                         setSort={setSort} onEdit={openEdit} onDelete={handleDelete}
-                        density="compact" showCategories={tw.showCategories}
+                        density="compact" showCategories={true}
                         t={t} lang={lang} />
         </section>
 
@@ -209,21 +185,6 @@ function App() {
                       onSave={handleSave} editing={editing} t={t} lang={lang} />
       <MeasureModal open={showMeasure} onClose={() => setShowMeasure(false)} t={t} lang={lang} />
       <ExportModal open={showExport} onClose={() => setShowExport(false)} entries={entries} t={t} lang={lang} />
-
-      <TweaksPanel title="Tweaks">
-        <TweakSection label="Display" />
-        <TweakToggle label="Show chart" value={tw.showChart}
-                     onChange={(v) => setTw("showChart", v)} />
-        <TweakToggle label="Show BP categories" value={tw.showCategories}
-                     onChange={(v) => setTw("showCategories", v)} />
-        <TweakSection label="Accent" />
-        <TweakColor label="Accent color" value={tw.accent}
-                    onChange={(v) => setTw("accent", v)} />
-        <TweakSection label="Language" />
-        <TweakRadio label="Locale" value={tw.lang}
-                    options={[{ value: "en", label: "English" }, { value: "de", label: "Deutsch" }]}
-                    onChange={(v) => setTw("lang", v)} />
-      </TweaksPanel>
     </div>
   );
 }

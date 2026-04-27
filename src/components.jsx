@@ -414,7 +414,7 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, de
 }
 
 // ── Summary cards ──────────────────────────────────────────────────────────
-function SummaryCards({ entries, t, accent }) {
+function SummaryCards({ entries, t }) {
   if (entries.length === 0) return null;
   const avg = (k) => {
     const vals = entries.map(e => e[k]).filter(v => v != null);
