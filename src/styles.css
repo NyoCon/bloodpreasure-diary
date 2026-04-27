@@ -806,11 +806,10 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
 
 /* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 720px) {
-  .topbar { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
-  .brand-text p { display: none; }
-  .brand-text h1 { font-size: 16px; }
+  .topbar { padding: 10px 14px; flex-wrap: nowrap; gap: 10px; }
+  .brand-text { display: none; }
   .brand-mark { width: 32px; height: 32px; }
-  .topbar-actions { gap: 6px; flex-wrap: wrap; }
+  .topbar-actions { gap: 6px; flex-wrap: nowrap; }
   .topbar-actions .btn { padding: 7px 9px; }
   .topbar-actions .btn span { display: none; }
   .topbar-actions .btn.primary span { display: inline; }
