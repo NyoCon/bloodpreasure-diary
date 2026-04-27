@@ -82,6 +82,16 @@ const I18N = {
     addEntry: "Add entry",
     editEntry: "Edit entry",
     measurements: "measurements",
+    menu: "Menu",
+    language: "Language",
+    exportPdf: "Export PDF",
+    exportData: "Export data",
+    importData: "Import data",
+    importFound: "{n} entries found in file.",
+    importChoose: "Add to existing entries or replace all current data?",
+    importAdd: "Add",
+    importReplace: "Replace",
+    importError: "Could not import: invalid file format",
   },
   de: {
     appName: "Blutdruck Tagebuch",
@@ -163,6 +173,16 @@ const I18N = {
     addEntry: "Eintrag hinzufügen",
     editEntry: "Eintrag bearbeiten",
     measurements: "Messungen",
+    menu: "Menü",
+    language: "Sprache",
+    exportPdf: "PDF-Export",
+    exportData: "Daten exportieren",
+    importData: "Daten importieren",
+    importFound: "{n} Einträge in Datei gefunden.",
+    importChoose: "Zu vorhandenen Einträgen hinzufügen oder alle aktuellen Daten ersetzen?",
+    importAdd: "Hinzufügen",
+    importReplace: "Ersetzen",
+    importError: "Import fehlgeschlagen: ungültiges Dateiformat",
   },
 };
 
@@ -335,8 +355,70 @@ function dbDelete(id) {
   }));
 }
 
+function dbClear() {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const req = tx.objectStore(STORE_NAME).clear();
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  }));
+}
+
+// ── JSON import/export ──────────────────────────────────────────────────────
+function exportJSON(entries) {
+  const payload = {
+    version: 1,
+    exported: new Date().toISOString(),
+    entries,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "bp-diary-" + toISODate(Date.now()) + ".json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+}
+
+function importJSON() {
+  return new Promise((resolve, reject) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json,application/json";
+    input.onchange = () => {
+      const file = input.files && input.files[0];
+      if (!file) return resolve(null);
+      file.text().then(text => {
+        try {
+          const data = JSON.parse(text);
+          const list = Array.isArray(data) ? data : data && data.entries;
+          if (!Array.isArray(list)) return reject(new Error("not an array"));
+          const valid = list.filter(e =>
+            e && typeof e.id === "string" &&
+            typeof e.ts === "number" &&
+            typeof e.sys === "number" &&
+            typeof e.dia === "number"
+          ).map(e => ({
+            id: e.id,
+            ts: e.ts,
+            sys: e.sys,
+            dia: e.dia,
+            pul: typeof e.pul === "number" ? e.pul : null,
+            comment: typeof e.comment === "string" ? e.comment : "",
+          }));
+          if (!valid.length) return reject(new Error("no valid entries"));
+          resolve(valid);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    };
+    input.click();
+  });
+}
+
 Object.assign(window, {
   I18N, MEASURE_TIPS, CATEGORIES, categorize, buildSeed,
   toISODate, toISOTime, fromInputs, formatDate, formatTime, relativeDay,
-  dbGetAll, dbPut, dbDelete,
+  dbGetAll, dbPut, dbDelete, dbClear, exportJSON, importJSON,
 });

@@ -26,6 +26,7 @@ function App() {
   const [editing, setEditing] = React.useState(null);
   const [showMeasure, setShowMeasure] = React.useState(false);
   const [showExport, setShowExport] = React.useState(false);
+  const [pendingImport, setPendingImport] = React.useState(null);
 
   const filtered = React.useMemo(() => {
     let arr = entries;
@@ -86,6 +87,24 @@ function App() {
     }
   };
 
+  const handleExportData = () => exportJSON(entries);
+
+  const handleImportData = () => {
+    importJSON()
+      .then(imported => { if (imported) setPendingImport(imported); })
+      .catch(() => window.alert(t.importError));
+  };
+
+  const finishImport = (mode) => {
+    const imported = pendingImport;
+    setPendingImport(null);
+    if (!imported) return;
+    const op = mode === "replace"
+      ? dbClear().then(() => Promise.all(imported.map(e => dbPut(e))))
+      : Promise.all(imported.map(e => dbPut(e)));
+    op.then(() => dbGetAll()).then(setEntries);
+  };
+
   const openEdit = (entry) => { setEditing(entry); setShowForm(true); };
   const openNew = () => { setEditing(null); setShowForm(true); };
 
@@ -112,12 +131,6 @@ function App() {
           </div>
         </div>
         <div className="topbar-actions">
-          <div className="lang-switch" role="radiogroup" aria-label="Language">
-            <button type="button" className={lang === "en" ? "lang on" : "lang"}
-                    onClick={() => changeLang("en")}>EN</button>
-            <button type="button" className={lang === "de" ? "lang on" : "lang"}
-                    onClick={() => changeLang("de")}>DE</button>
-          </div>
           <button type="button" className="btn ghost" onClick={() => setShowMeasure(true)}
                   aria-label={t.howTo} title={t.howTo}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -126,20 +139,17 @@ function App() {
             </svg>
             <span>{t.howTo}</span>
           </button>
-          <button type="button" className="btn ghost" onClick={() => setShowExport(true)}
-                  disabled={entries.length === 0}
-                  title={lang === "de" ? "PDF-Export" : "Export PDF"}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M12 4v12M7 11l5 5 5-5M5 20h14" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span>PDF</span>
-          </button>
           <button type="button" className="btn primary" onClick={openNew}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
               <path d="M12 5v14M5 12h14" strokeLinecap="round" />
             </svg>
             <span>{t.newEntry}</span>
           </button>
+          <TopMenu lang={lang} onChangeLang={changeLang}
+                   onExportPdf={() => setShowExport(true)}
+                   onExportData={handleExportData}
+                   onImportData={handleImportData}
+                   hasEntries={entries.length > 0} t={t} />
         </div>
       </header>
 
@@ -180,6 +190,12 @@ function App() {
                       onSave={handleSave} editing={editing} t={t} lang={lang} />
       <MeasureModal open={showMeasure} onClose={() => setShowMeasure(false)} t={t} lang={lang} />
       <ExportModal open={showExport} onClose={() => setShowExport(false)} entries={entries} t={t} lang={lang} />
+      <ImportModal open={pendingImport !== null}
+                   onClose={() => setPendingImport(null)}
+                   count={pendingImport ? pendingImport.length : 0}
+                   onReplace={() => finishImport("replace")}
+                   onAdd={() => finishImport("add")}
+                   t={t} />
     </div>
   );
 }

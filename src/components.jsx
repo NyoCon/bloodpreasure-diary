@@ -455,7 +455,100 @@ function SummaryCards({ entries, t }) {
   );
 }
 
+// ── Import confirmation modal ──────────────────────────────────────────────
+function ImportModal({ open, onClose, count, onReplace, onAdd, t }) {
+  return (
+    <Modal open={open} onClose={onClose}>
+      <header className="modal-hd">
+        <h2>{t.importData}</h2>
+        <button type="button" className="icon-btn" onClick={onClose} aria-label={t.close}>✕</button>
+      </header>
+      <div className="modal-body import-body">
+        <p>{t.importFound.replace("{n}", count)}</p>
+        <p className="muted">{t.importChoose}</p>
+      </div>
+      <footer className="modal-ft">
+        <button type="button" className="btn ghost" onClick={onAdd}>{t.importAdd}</button>
+        <button type="button" className="btn primary" onClick={onReplace}>{t.importReplace}</button>
+      </footer>
+    </Modal>
+  );
+}
+
+// ── Topbar dropdown menu ───────────────────────────────────────────────────
+function TopMenu({ lang, onChangeLang, onExportPdf, onExportData, onImportData, hasEntries, t }) {
+  const [open, setOpen] = React.useState(false);
+  const wrapRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const onClick = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onClick);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const run = (fn) => () => { setOpen(false); fn(); };
+
+  return (
+    <div className="menu-wrap" ref={wrapRef}>
+      <button type="button" className="btn ghost menu-trigger"
+              onClick={() => setOpen(o => !o)}
+              aria-haspopup="menu" aria-expanded={open}
+              aria-label={t.menu} title={t.menu}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <circle cx="12" cy="5"  r="1.6" />
+          <circle cx="12" cy="12" r="1.6" />
+          <circle cx="12" cy="19" r="1.6" />
+        </svg>
+      </button>
+      {open && (
+        <div className="menu-pop" role="menu">
+          <div className="menu-section">
+            <span className="menu-lbl">{t.language}</span>
+            <div className="menu-lang">
+              <button type="button" className={lang === "en" ? "lang on" : "lang"}
+                      onClick={run(() => onChangeLang("en"))}>EN</button>
+              <button type="button" className={lang === "de" ? "lang on" : "lang"}
+                      onClick={run(() => onChangeLang("de"))}>DE</button>
+            </div>
+          </div>
+          <div className="menu-divider" />
+          <button type="button" className="menu-item" role="menuitem"
+                  disabled={!hasEntries} onClick={run(onExportPdf)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" strokeLinejoin="round"/>
+              <path d="M14 3v6h6" strokeLinejoin="round"/>
+            </svg>
+            <span>{t.exportPdf}</span>
+          </button>
+          <button type="button" className="menu-item" role="menuitem"
+                  disabled={!hasEntries} onClick={run(onExportData)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 4v12M7 11l5 5 5-5M5 20h14" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span>{t.exportData}</span>
+          </button>
+          <button type="button" className="menu-item" role="menuitem"
+                  onClick={run(onImportData)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 20V8M7 13l5-5 5 5M5 4h14" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span>{t.importData}</span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 Object.assign(window, {
-  CategoryBadge, Modal, EntryFormModal, MeasureModal,
-  FilterBar, EntriesTable, SummaryCards,
+  CategoryBadge, Modal, EntryFormModal, MeasureModal, ImportModal,
+  FilterBar, EntriesTable, SummaryCards, TopMenu,
 });
