@@ -330,7 +330,7 @@ function FilterBar({ filters, setFilters, t, lang, total, shown }) {
 }
 
 // ── Entries table ──────────────────────────────────────────────────────────
-function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, density, showCategories, t, lang }) {
+function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, onShowComment, density, showCategories, t, lang }) {
   const Header = ({ k, label, align, className }) => {
     const active = sortKey === k;
     const cls = [align === "right" ? "th-right" : "", className].filter(Boolean).join(" ");
@@ -384,7 +384,17 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, de
                   <div className="when-rel">{formatDate(e.ts, lang)}</div>
                   <div className="when-time">{formatTime(e.ts, lang)}</div>
                   {showCategories && (
-                    <div className="when-cat-mob"><span className="cat-dot" style={{ background: cat.color }} /><span style={{ color: cat.color }}>{t["cat_" + cat.key]}</span></div>
+                    <div className="when-cat-mob">
+                      <span className="cat-dot" style={{ background: cat.color }} />
+                      <span style={{ color: cat.color }}>{t["cat_" + cat.key]}</span>
+                      {e.comment && (
+                        <span className="comment-mark" title={t.hasComment} aria-label={t.hasComment}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinejoin="round"/>
+                          </svg>
+                        </span>
+                      )}
+                    </div>
                   )}
                 </td>
                 <td className="td-num">
@@ -403,12 +413,10 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, de
                   <span title={e.comment}>{e.comment || <span className="dash">—</span>}</span>
                 </td>
                 <td className="td-actions">
-                  <button type="button" className="row-btn" title={t.edit} onClick={() => onEdit(e)}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M16 3l5 5-11 11H5v-5z"/></svg>
-                  </button>
-                  <button type="button" className="row-btn danger" title={t.delete} onClick={() => onDelete(e)}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
-                  </button>
+                  <RowActionsMenu onEdit={() => onEdit(e)}
+                                  onDelete={() => onDelete(e)}
+                                  onShowComment={e.comment ? () => onShowComment(e.comment) : null}
+                                  t={t} />
                 </td>
               </tr>
             );
@@ -452,6 +460,95 @@ function SummaryCards({ entries, t }) {
         <div className="sc-meta muted">{entries.length} {t.measurements}</div>
       </div>
     </section>
+  );
+}
+
+// ── Comment view modal ─────────────────────────────────────────────────────
+function CommentModal({ open, onClose, comment, t }) {
+  return (
+    <Modal open={open} onClose={onClose}>
+      <header className="modal-hd">
+        <h2>{t.comment}</h2>
+        <button type="button" className="icon-btn" onClick={onClose} aria-label={t.close}>✕</button>
+      </header>
+      <div className="modal-body">
+        <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>{comment}</p>
+      </div>
+    </Modal>
+  );
+}
+
+// ── Per-row actions dropdown ───────────────────────────────────────────────
+function RowActionsMenu({ onEdit, onDelete, onShowComment, t }) {
+  const [open, setOpen] = React.useState(false);
+  const [pos, setPos] = React.useState(null);
+  const btnRef = React.useRef(null);
+  const popRef = React.useRef(null);
+
+  const toggle = () => {
+    if (!open && btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 4, right: window.innerWidth - r.right });
+    }
+    setOpen(o => !o);
+  };
+
+  React.useEffect(() => {
+    if (!open) return;
+    const onClick = (e) => {
+      if (btnRef.current && btnRef.current.contains(e.target)) return;
+      if (popRef.current && popRef.current.contains(e.target)) return;
+      setOpen(false);
+    };
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onClick);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const run = (fn) => () => { setOpen(false); fn(); };
+
+  return (
+    <>
+      <button ref={btnRef} type="button" className="row-btn" onClick={toggle}
+              aria-haspopup="menu" aria-expanded={open} aria-label={t.actions || "Actions"}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="5"  r="1.6" />
+          <circle cx="12" cy="12" r="1.6" />
+          <circle cx="12" cy="19" r="1.6" />
+        </svg>
+      </button>
+      {open && pos && ReactDOM.createPortal(
+        <div ref={popRef} className="menu-pop row-menu-pop"
+             style={{ position: "fixed", top: pos.top, right: pos.right }}
+             role="menu">
+          {onShowComment && (
+            <button type="button" className="menu-item" role="menuitem" onClick={run(onShowComment)}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinejoin="round"/>
+              </svg>
+              <span>{t.viewComment}</span>
+            </button>
+          )}
+          <button type="button" className="menu-item" role="menuitem" onClick={run(onEdit)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M16 3l5 5-11 11H5v-5z" strokeLinejoin="round"/>
+            </svg>
+            <span>{t.edit}</span>
+          </button>
+          <button type="button" className="menu-item danger" role="menuitem" onClick={run(onDelete)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span>{t.delete}</span>
+          </button>
+        </div>,
+        document.body
+      )}
+    </>
   );
 }
 
@@ -549,6 +646,6 @@ function TopMenu({ lang, onChangeLang, onExportPdf, onExportData, onImportData, 
 }
 
 Object.assign(window, {
-  CategoryBadge, Modal, EntryFormModal, MeasureModal, ImportModal,
-  FilterBar, EntriesTable, SummaryCards, TopMenu,
+  CategoryBadge, Modal, EntryFormModal, MeasureModal, ImportModal, CommentModal,
+  FilterBar, EntriesTable, SummaryCards, TopMenu, RowActionsMenu,
 });

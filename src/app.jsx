@@ -27,6 +27,7 @@ function App() {
   const [showMeasure, setShowMeasure] = React.useState(false);
   const [showExport, setShowExport] = React.useState(false);
   const [pendingImport, setPendingImport] = React.useState(null);
+  const [viewingComment, setViewingComment] = React.useState(null);
 
   const filtered = React.useMemo(() => {
     let arr = entries;
@@ -179,6 +180,7 @@ function App() {
                          total={entries.length} shown={filtered.length} />
               <EntriesTable entries={filtered} sortKey={filters.sortKey} sortDir={filters.sortDir}
                             setSort={setSort} onEdit={openEdit} onDelete={handleDelete}
+                            onShowComment={setViewingComment}
                             density="compact" showCategories={true}
                             t={t} lang={lang} />
             </section>
@@ -196,6 +198,9 @@ function App() {
                    onReplace={() => finishImport("replace")}
                    onAdd={() => finishImport("add")}
                    t={t} />
+      <CommentModal open={viewingComment !== null}
+                    onClose={() => setViewingComment(null)}
+                    comment={viewingComment || ""} t={t} />
     </div>
   );
 }

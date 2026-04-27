@@ -92,6 +92,8 @@ const I18N = {
     importAdd: "Add",
     importReplace: "Replace",
     importError: "Could not import: invalid file format",
+    viewComment: "View comment",
+    hasComment: "Has comment",
   },
   de: {
     appName: "Blutdruck Tagebuch",
@@ -183,6 +185,8 @@ const I18N = {
     importAdd: "Hinzufügen",
     importReplace: "Ersetzen",
     importError: "Import fehlgeschlagen: ungültiges Dateiformat",
+    viewComment: "Kommentar anzeigen",
+    hasComment: "Hat einen Kommentar",
   },
 };
 
