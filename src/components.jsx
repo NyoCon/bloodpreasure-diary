@@ -385,7 +385,7 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, de
                   <span className="num-strong" style={showCategories ? { color: cat.color } : null}>{e.sys}</span>
                 </td>
                 <td className="td-num">
-                  <span className="num">{e.dia}</span>
+                  <span className="num" style={showCategories ? { color: cat.color } : null}>{e.dia}</span>
                 </td>
                 <td className="td-num col-pul">
                   <span className="num muted">{e.pul == null ? "—" : e.pul}</span>
