@@ -3,7 +3,7 @@ const {
   Tooltip, ReferenceArea, ResponsiveContainer,
 } = Recharts;
 
-function TrendChart({ entries, t, lang, showCategories }) {
+function TrendChart({ entries, t, lang, showCategories, showPul }) {
   const sorted = React.useMemo(
     () => [...entries].sort((a, b) => a.ts - b.ts),
     [entries]
@@ -35,7 +35,7 @@ function TrendChart({ entries, t, lang, showCategories }) {
     return <div className="chart-empty"><span>{t.noEntries}</span></div>;
   }
 
-  const allVals = data.flatMap(e => [e.sys, e.dia, e.pul].filter(v => v != null));
+  const allVals = data.flatMap(e => (showPul ? [e.sys, e.dia, e.pul] : [e.sys, e.dia]).filter(v => v != null));
   const yMax = Math.ceil((Math.max(...allVals) + 10) / 10) * 10;
   const yMin = Math.floor((Math.min(...allVals) - 10) / 10) * 10;
 
@@ -58,7 +58,7 @@ function TrendChart({ entries, t, lang, showCategories }) {
         </div>
         <div className="chart-tip-rows">
           {sys != null && dia != null && <span><b>{sys}</b>/<b>{dia}</b> {t.mmHg}</span>}
-          {pul != null && <span className="muted">{pul} {t.bpm}</span>}
+          {showPul && pul != null && <span className="muted">{pul} {t.bpm}</span>}
         </div>
       </div>
     );
@@ -71,7 +71,7 @@ function TrendChart({ entries, t, lang, showCategories }) {
       <div className="chart-legend">
         <span className="legend-item"><i style={{ background: "var(--accent)" }} />{t.sys} <span className="muted">{t.mmHg}</span></span>
         <span className="legend-item"><i style={{ background: "var(--accent)", opacity: 0.4 }} />{t.dia} <span className="muted">{t.mmHg}</span></span>
-        <span className="legend-item"><i style={{ background: "transparent", border: "1px dashed var(--fg-50)" }} />{t.pul} <span className="muted">{t.bpm}</span></span>
+        {showPul && <span className="legend-item"><i style={{ background: "transparent", border: "1px dashed var(--fg-50)" }} />{t.pul} <span className="muted">{t.bpm}</span></span>}
       </div>
       <ResponsiveContainer width="100%" height={280}>
         <LineChart data={data} margin={{ top: 8, right: 16, bottom: 4, left: 0 }}>
@@ -111,8 +111,10 @@ function TrendChart({ entries, t, lang, showCategories }) {
           <Line dataKey="dia" stroke="var(--accent)" strokeWidth={1.5} strokeOpacity={0.45}
                 dot={{ r: 3, fill: "var(--bg)", stroke: "var(--accent)", strokeOpacity: 0.55, strokeWidth: 1.5 }}
                 activeDot={{ r: 4 }} connectNulls isAnimationActive={false} />
-          <Line dataKey="pul" stroke="var(--fg-50)" strokeWidth={1.25} strokeDasharray="4 3"
-                dot={false} connectNulls isAnimationActive={false} />
+          {showPul && (
+            <Line dataKey="pul" stroke="var(--fg-50)" strokeWidth={1.25} strokeDasharray="4 3"
+                  dot={false} connectNulls isAnimationActive={false} />
+          )}
         </LineChart>
       </ResponsiveContainer>
     </div>

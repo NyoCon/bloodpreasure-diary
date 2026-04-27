@@ -1,7 +1,13 @@
 function App() {
   const [lang, setLang] = React.useState(() => localStorage.getItem("lang") || "en");
+  const [showPul, setShowPul] = React.useState(() => localStorage.getItem("showPul") !== "false");
 
   const changeLang = (l) => { localStorage.setItem("lang", l); setLang(l); };
+  const toggleShowPul = () => setShowPul(prev => {
+    const next = !prev;
+    localStorage.setItem("showPul", String(next));
+    return next;
+  });
   const t = I18N[lang];
 
   const [entries, setEntries] = React.useState([]);
@@ -147,6 +153,7 @@ function App() {
             <span>{t.newEntry}</span>
           </button>
           <TopMenu lang={lang} onChangeLang={changeLang}
+                   showPul={showPul} onToggleShowPul={toggleShowPul}
                    onExportPdf={() => setShowExport(true)}
                    onExportData={handleExportData}
                    onImportData={handleImportData}
@@ -169,7 +176,7 @@ function App() {
               <div className="panel-hd">
                 <h2>{t.chart}</h2>
               </div>
-              <TrendChart entries={filtered} t={t} lang={lang} showCategories={true} />
+              <TrendChart entries={filtered} t={t} lang={lang} showCategories={true} showPul={showPul} />
             </section>
 
             <section className="panel">
@@ -181,7 +188,7 @@ function App() {
               <EntriesTable entries={filtered} sortKey={filters.sortKey} sortDir={filters.sortDir}
                             setSort={setSort} onEdit={openEdit} onDelete={handleDelete}
                             onShowComment={setViewingComment}
-                            density="compact" showCategories={true}
+                            density="compact" showCategories={true} showPul={showPul}
                             t={t} lang={lang} />
             </section>
           </>

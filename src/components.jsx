@@ -330,7 +330,7 @@ function FilterBar({ filters, setFilters, t, lang, total, shown }) {
 }
 
 // ── Entries table ──────────────────────────────────────────────────────────
-function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, onShowComment, density, showCategories, t, lang }) {
+function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, onShowComment, density, showCategories, showPul, t, lang }) {
   const Header = ({ k, label, align, className }) => {
     const active = sortKey === k;
     const cls = [align === "right" ? "th-right" : "", className].filter(Boolean).join(" ");
@@ -369,7 +369,7 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, on
             <Header k="ts"  label={t.when} />
             <Header k="sys" label={t.sys} align="right" />
             <Header k="dia" label={t.dia} align="right" />
-            <Header k="pul" label={t.pul} align="right" className="col-pul" />
+            {showPul && <Header k="pul" label={t.pul} align="right" />}
             {showCategories && <th className="col-cat">{t.category}</th>}
             <th className="col-comment">{t.comment}</th>
             <th aria-label={t.actions} />
@@ -403,9 +403,11 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, on
                 <td className="td-num">
                   <span className="num" style={showCategories ? { color: cat.color } : null}>{e.dia}</span>
                 </td>
-                <td className="td-num col-pul">
-                  <span className="num muted">{e.pul == null ? "—" : e.pul}</span>
-                </td>
+                {showPul && (
+                  <td className="td-num">
+                    <span className="num muted">{e.pul == null ? "—" : e.pul}</span>
+                  </td>
+                )}
                 {showCategories && (
                   <td className="col-cat"><CategoryBadge sys={e.sys} dia={e.dia} t={t} mode="badge" /></td>
                 )}
@@ -573,7 +575,7 @@ function ImportModal({ open, onClose, count, onReplace, onAdd, t }) {
 }
 
 // ── Topbar dropdown menu ───────────────────────────────────────────────────
-function TopMenu({ lang, onChangeLang, onExportPdf, onExportData, onImportData, hasEntries, t }) {
+function TopMenu({ lang, onChangeLang, showPul, onToggleShowPul, onExportPdf, onExportData, onImportData, hasEntries, t }) {
   const [open, setOpen] = React.useState(false);
   const wrapRef = React.useRef(null);
 
@@ -616,6 +618,12 @@ function TopMenu({ lang, onChangeLang, onExportPdf, onExportData, onImportData, 
                       onClick={run(() => onChangeLang("de"))}>DE</button>
             </div>
           </div>
+          <div className="menu-divider" />
+          <button type="button" className="menu-item menu-toggle" role="menuitemcheckbox"
+                  aria-checked={showPul} onClick={onToggleShowPul}>
+            <span>{t.showPul}</span>
+            <span className={"menu-switch" + (showPul ? " on" : "")} aria-hidden="true" />
+          </button>
           <div className="menu-divider" />
           <button type="button" className="menu-item" role="menuitem"
                   disabled={!hasEntries} onClick={run(onExportPdf)}>
