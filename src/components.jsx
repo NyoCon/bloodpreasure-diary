@@ -243,7 +243,7 @@ function FilterBar({ filters, setFilters, t, lang, total, shown }) {
     setFilters({ ...filters, from, to, quickRange: key });
   };
 
-  const hasFilters = filters.from || filters.to || filters.valueFilters.length > 0;
+  const hasFilters = filters.valueFilters.length > 0;
 
   return (
     <section className="filterbar">
@@ -320,7 +320,7 @@ function FilterBar({ filters, setFilters, t, lang, total, shown }) {
           </button>
         </div>
         {hasFilters && (
-          <button type="button" className="link-btn" onClick={() => setQuickRange("all") || setFilters({ from: "", to: "", quickRange: "all", valueFilters: [], sortKey: filters.sortKey, sortDir: filters.sortDir })}>
+          <button type="button" className="link-btn" onClick={() => setFilters({ ...filters, valueFilters: [] })}>
             {t.clearFilters}
           </button>
         )}
