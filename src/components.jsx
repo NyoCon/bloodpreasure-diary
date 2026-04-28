@@ -430,7 +430,7 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, on
 }
 
 // ── Summary cards ──────────────────────────────────────────────────────────
-function SummaryCards({ entries, t }) {
+function SummaryCards({ entries, showPul, t }) {
   if (entries.length === 0) return null;
   const avg = (k) => {
     const vals = entries.map(e => e[k]).filter(v => v != null);
@@ -453,14 +453,16 @@ function SummaryCards({ entries, t }) {
           <span style={{ color: cat.color }}>{t["cat_" + cat.key]}</span>
         </div>
       </div>
-      <div className="summary-card">
-        <div className="sc-lbl">{t.avgPul}</div>
-        <div className="sc-val">
-          <span className="sc-num">{aPul == null ? "—" : aPul}</span>
-          <span className="sc-unit">{t.bpm}</span>
+      {showPul && (
+        <div className="summary-card">
+          <div className="sc-lbl">{t.avgPul}</div>
+          <div className="sc-val">
+            <span className="sc-num">{aPul == null ? "—" : aPul}</span>
+            <span className="sc-unit">{t.bpm}</span>
+          </div>
+          <div className="sc-meta muted">{entries.length} {t.measurements}</div>
         </div>
-        <div className="sc-meta muted">{entries.length} {t.measurements}</div>
-      </div>
+      )}
     </section>
   );
 }

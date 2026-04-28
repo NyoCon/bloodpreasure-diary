@@ -134,7 +134,7 @@ function App() {
           </div>
         ) : (
           <>
-            <SummaryCards entries={filtered} t={t} />
+            <SummaryCards entries={filtered} showPul={showPul} t={t} />
 
             <section className="panel">
               <div className="panel-hd">
