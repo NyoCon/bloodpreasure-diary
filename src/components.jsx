@@ -575,7 +575,7 @@ function ImportModal({ open, onClose, count, onReplace, onAdd, t }) {
 }
 
 // ── Topbar dropdown menu ───────────────────────────────────────────────────
-function TopMenu({ lang, onChangeLang, showPul, onToggleShowPul, onExportPdf, onExportData, onImportData, hasEntries, t }) {
+function TopMenu({ lang, onChangeLang, showPul, onToggleShowPul, onShowMeasure, onExportPdf, onExportData, onImportData, hasEntries, t }) {
   const [open, setOpen] = React.useState(false);
   const wrapRef = React.useRef(null);
 
@@ -596,19 +596,19 @@ function TopMenu({ lang, onChangeLang, showPul, onToggleShowPul, onExportPdf, on
   const run = (fn) => () => { setOpen(false); fn(); };
 
   return (
-    <div className="menu-wrap" ref={wrapRef}>
-      <button type="button" className="btn ghost menu-trigger"
+    <div className="menu-wrap fab-menu-wrap" ref={wrapRef}>
+      <button type="button" className="fab fab-secondary"
               onClick={() => setOpen(o => !o)}
               aria-haspopup="menu" aria-expanded={open}
               aria-label={t.menu} title={t.menu}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <circle cx="12" cy="5"  r="1.6" />
           <circle cx="12" cy="12" r="1.6" />
           <circle cx="12" cy="19" r="1.6" />
         </svg>
       </button>
       {open && (
-        <div className="menu-pop" role="menu">
+        <div className="menu-pop menu-pop-up" role="menu">
           <div className="menu-section">
             <span className="menu-lbl">{t.language}</span>
             <div className="menu-lang">
@@ -623,6 +623,15 @@ function TopMenu({ lang, onChangeLang, showPul, onToggleShowPul, onExportPdf, on
                   aria-checked={showPul} onClick={onToggleShowPul}>
             <span>{t.showPul}</span>
             <span className={"menu-switch" + (showPul ? " on" : "")} aria-hidden="true" />
+          </button>
+          <div className="menu-divider" />
+          <button type="button" className="menu-item" role="menuitem"
+                  onClick={run(onShowMeasure)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7M12 17h.01" strokeLinecap="round" />
+            </svg>
+            <span>{t.howTo}</span>
           </button>
           <div className="menu-divider" />
           <button type="button" className="menu-item" role="menuitem"

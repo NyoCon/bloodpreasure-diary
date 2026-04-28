@@ -125,42 +125,6 @@ function App() {
 
   return (
     <div className="app">
-      <header className="topbar">
-        <div className="brand">
-          <div className="brand-mark" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M3 12h4l2-7 4 14 2-7h6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <div className="brand-text">
-            <h1>{t.appName}</h1>
-            <p>{t.tagline}</p>
-          </div>
-        </div>
-        <div className="topbar-actions">
-          <button type="button" className="btn ghost" onClick={() => setShowMeasure(true)}
-                  aria-label={t.howTo} title={t.howTo}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7M12 17h.01" strokeLinecap="round" />
-            </svg>
-            <span>{t.howTo}</span>
-          </button>
-          <button type="button" className="btn primary" onClick={openNew}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-              <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-            </svg>
-            <span>{t.newEntry}</span>
-          </button>
-          <TopMenu lang={lang} onChangeLang={changeLang}
-                   showPul={showPul} onToggleShowPul={toggleShowPul}
-                   onExportPdf={() => setShowExport(true)}
-                   onExportData={handleExportData}
-                   onImportData={handleImportData}
-                   hasEntries={entries.length > 0} t={t} />
-        </div>
-      </header>
-
       <main className="content">
         {entries.length === 0 ? (
           <div className="empty-state big">
@@ -194,6 +158,24 @@ function App() {
           </>
         )}
       </main>
+
+      <div className="fab-stack">
+        <TopMenu lang={lang} onChangeLang={changeLang}
+                 showPul={showPul} onToggleShowPul={toggleShowPul}
+                 onShowMeasure={() => setShowMeasure(true)}
+                 onExportPdf={() => setShowExport(true)}
+                 onExportData={handleExportData}
+                 onImportData={handleImportData}
+                 hasEntries={entries.length > 0} t={t} />
+        {entries.length > 0 && (
+          <button type="button" className="fab" onClick={openNew}
+                  aria-label={t.newEntry} title={t.newEntry}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+            </svg>
+          </button>
+        )}
+      </div>
 
       <EntryFormModal open={showForm} onClose={() => { setShowForm(false); setEditing(null); }}
                       onSave={handleSave} editing={editing} t={t} lang={lang} />
