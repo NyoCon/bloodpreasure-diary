@@ -639,11 +639,18 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
 .menu-item.danger { color: var(--danger); }
 .menu-item.danger svg { color: var(--danger); }
 .comment-mark {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 2px;
+  margin-left: 2px;
+  border-radius: 4px;
   display: inline-flex;
   align-items: center;
-  margin-left: 4px;
   color: var(--fg-50);
+  cursor: pointer;
 }
+.comment-mark:hover { color: var(--fg); background: var(--surface-2); }
 .row-btn {
   appearance: none;
   border: 0;
@@ -966,6 +973,12 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
   .compact .entries-table td,
   .entries-table td { padding: 10px 12px; font-size: 13px; }
   .entries-table .th-btn { padding-left: 12px; padding-right: 12px; }
+  .entries-table td.td-num { padding-left: 10px; padding-right: 10px; }
+  .entries-table thead th { padding-left: 0; padding-right: 0; }
+  .entries-table th.th-right .th-btn { padding-left: 10px; padding-right: 10px; }
+  .entries-table td.td-num:not(:has(+ .td-num)) { padding-right: 0; }
+  .entries-table th.th-right:not(:has(+ .th-right)) .th-btn { padding-right: 0; }
+  .entries-table td.td-actions { padding-left: 4px; padding-right: 8px; }
   .when-cat-mob {
     display: flex;
     align-items: center;

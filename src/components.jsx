@@ -388,11 +388,12 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, on
                       <span className="cat-dot" style={{ background: cat.color }} />
                       <span style={{ color: cat.color }}>{t["cat_" + cat.key]}</span>
                       {e.comment && (
-                        <span className="comment-mark" title={t.hasComment} aria-label={t.hasComment}>
+                        <button type="button" className="comment-mark" title={t.viewComment} aria-label={t.viewComment}
+                                onClick={() => onShowComment(e.comment)}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinejoin="round"/>
                           </svg>
-                        </span>
+                        </button>
                       )}
                     </div>
                   )}
