@@ -1,0 +1,9 @@
+FROM node:alpine
+RUN npm install -g browser-sync
+WORKDIR /app
+EXPOSE 80
+CMD ["browser-sync", "start", \
+     "--server", ".", \
+     "--port", "80", \
+     "--no-ui", "--no-open", "--no-notify", \
+     "--files", "index.html,manifest.json,sw.js,src/**/*,icons/**/*"]
