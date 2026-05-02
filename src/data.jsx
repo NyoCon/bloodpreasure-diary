@@ -95,6 +95,9 @@ const I18N = {
     viewComment: "View comment",
     hasComment: "Has comment",
     showPul: "Show pulse",
+    darkMode: "Dark mode",
+    deleteAllData: "Delete all data",
+    confirmDeleteAll: "Delete all entries? This cannot be undone.",
     arrhythmia: "Arrhythmia detected",
   },
   de: {
@@ -190,6 +193,9 @@ const I18N = {
     viewComment: "Kommentar anzeigen",
     hasComment: "Hat einen Kommentar",
     showPul: "Puls anzeigen",
+    darkMode: "Dunkler Modus",
+    deleteAllData: "Alle Daten löschen",
+    confirmDeleteAll: "Alle Einträge löschen? Das kann nicht rückgängig gemacht werden.",
     arrhythmia: "Herzrhythmusstörung erkannt",
   },
 };

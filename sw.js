@@ -1,4 +1,4 @@
-const CACHE = "bp-diary-v9";
+const CACHE = "bp-diary-v15";
 const SHELL = [
   "/",
   "/index.html",
@@ -28,14 +28,27 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
+
+  // Network-first for HTML: always get a fresh index.html when online.
+  // This prevents the PWA from running a stale shell indefinitely.
+  if (e.request.mode === "navigate") {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          if (res && res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // Cache-first for all other assets (JS, CSS, fonts, icons).
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
       return fetch(e.request).then(res => {
-        if (res && res.ok) {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-        }
+        if (res && res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
         return res;
       });
     })

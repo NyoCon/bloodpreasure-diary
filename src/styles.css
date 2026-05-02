@@ -1,6 +1,7 @@
 /* styles.css — Blood Pressure Diary, clinical & minimal aesthetic */
 
-:root {
+:root,
+[data-theme="light"] {
   --bg: #ffffff;
   --surface: #fafaf9;
   --surface-2: #f5f4f1;
@@ -1030,3 +1031,27 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
   .modal-hd h2 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .modal-ft { padding: 12px 18px; }
 }
+
+/* ── Dark mode ────────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg: #0f0f0f;
+  --surface: #171717;
+  --surface-2: #202020;
+  --fg: #f0f0ee;
+  --fg-70: rgba(240, 240, 238, 0.7);
+  --fg-50: rgba(240, 240, 238, 0.5);
+  --fg-30: rgba(240, 240, 238, 0.3);
+  --fg-15: rgba(240, 240, 238, 0.15);
+  --border: rgba(240, 240, 238, 0.08);
+  --border-strong: rgba(240, 240, 238, 0.15);
+  --accent: #f0f0ee;
+
+  --sh-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --sh-md: 0 1px 3px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.45);
+  --sh-lg: 0 4px 12px rgba(0, 0, 0, 0.65), 0 24px 48px rgba(0, 0, 0, 0.55);
+}
+[data-theme="dark"] .btn:hover { background: rgba(240, 240, 238, 0.88); }
+[data-theme="dark"] .entries-table tbody tr:hover { background: rgba(240, 240, 238, 0.04); }
+[data-theme="dark"] .modal-scrim { background: rgba(0, 0, 0, 0.6); }
+[data-theme="dark"] .input:focus { box-shadow: 0 0 0 3px rgba(240, 240, 238, 0.08); }
+[data-theme="dark"] .fab.fab-secondary:hover { filter: none; }

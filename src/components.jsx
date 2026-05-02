@@ -572,6 +572,27 @@ function RowActionsMenu({ onEdit, onDelete, onShowComment, t }) {
   );
 }
 
+// ── Generic confirm modal ──────────────────────────────────────────────────
+function ConfirmModal({ open, onClose, onConfirm, message, confirmLabel, t }) {
+  return (
+    <Modal open={open} onClose={onClose}>
+      <header className="modal-hd">
+        <h2>{confirmLabel}</h2>
+        <button type="button" className="icon-btn" onClick={onClose} aria-label={t.close}>✕</button>
+      </header>
+      <div className="modal-body">
+        <p style={{ margin: 0 }}>{message}</p>
+      </div>
+      <footer className="modal-ft">
+        <button type="button" className="btn ghost" onClick={onClose}>{t.cancel}</button>
+        <button type="button" className="btn"
+                style={{ background: "var(--danger)", color: "#fff", borderColor: "var(--danger)" }}
+                onClick={() => { onConfirm(); onClose(); }}>{confirmLabel}</button>
+      </footer>
+    </Modal>
+  );
+}
+
 // ── Import confirmation modal ──────────────────────────────────────────────
 function ImportModal({ open, onClose, count, onReplace, onAdd, t }) {
   return (
@@ -593,7 +614,7 @@ function ImportModal({ open, onClose, count, onReplace, onAdd, t }) {
 }
 
 // ── Topbar dropdown menu ───────────────────────────────────────────────────
-function TopMenu({ lang, onChangeLang, showPul, onToggleShowPul, onShowMeasure, onExportPdf, onExportData, onImportData, hasEntries, t }) {
+function TopMenu({ lang, onChangeLang, showPul, onToggleShowPul, darkMode, onToggleDarkMode, onShowMeasure, onExportPdf, onExportData, onImportData, onDeleteAll, hasEntries, t }) {
   const [open, setOpen] = React.useState(false);
   const wrapRef = React.useRef(null);
 
@@ -642,6 +663,11 @@ function TopMenu({ lang, onChangeLang, showPul, onToggleShowPul, onShowMeasure, 
             <span>{t.showPul}</span>
             <span className={"menu-switch" + (showPul ? " on" : "")} aria-hidden="true" />
           </button>
+          <button type="button" className="menu-item menu-toggle" role="menuitemcheckbox"
+                  aria-checked={darkMode} onClick={onToggleDarkMode}>
+            <span>{t.darkMode}</span>
+            <span className={"menu-switch" + (darkMode ? " on" : "")} aria-hidden="true" />
+          </button>
           <div className="menu-divider" />
           <button type="button" className="menu-item" role="menuitem"
                   onClick={run(onShowMeasure)}>
@@ -674,6 +700,14 @@ function TopMenu({ lang, onChangeLang, showPul, onToggleShowPul, onShowMeasure, 
             </svg>
             <span>{t.importData}</span>
           </button>
+          <div className="menu-divider" />
+          <button type="button" className="menu-item danger" role="menuitem"
+                  disabled={!hasEntries} onClick={run(onDeleteAll)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span>{t.deleteAllData}</span>
+          </button>
         </div>
       )}
     </div>
@@ -681,6 +715,6 @@ function TopMenu({ lang, onChangeLang, showPul, onToggleShowPul, onShowMeasure, 
 }
 
 Object.assign(window, {
-  CategoryBadge, Modal, EntryFormModal, MeasureModal, ImportModal, CommentModal,
+  CategoryBadge, Modal, EntryFormModal, MeasureModal, ImportModal, CommentModal, ConfirmModal,
   FilterBar, EntriesTable, SummaryCards, TopMenu, RowActionsMenu,
 });

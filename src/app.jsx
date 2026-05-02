@@ -1,6 +1,9 @@
 function App() {
   const [lang, setLang] = React.useState(() => localStorage.getItem("lang") || "en");
   const [showPul, setShowPul] = React.useState(() => localStorage.getItem("showPul") !== "false");
+  const [darkMode, setDarkMode] = React.useState(
+    () => localStorage.getItem("darkMode") === "true"
+  );
 
   const changeLang = (l) => { localStorage.setItem("lang", l); setLang(l); };
   const toggleShowPul = () => setShowPul(prev => {
@@ -8,6 +11,16 @@ function App() {
     localStorage.setItem("showPul", String(next));
     return next;
   });
+  const toggleDarkMode = () => setDarkMode(prev => {
+    const next = !prev;
+    localStorage.setItem("darkMode", String(next));
+    return next;
+  });
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
+  }, [darkMode]);
+
   const t = I18N[lang];
 
   const [entries, setEntries] = React.useState([]);
@@ -28,6 +41,8 @@ function App() {
     sortDir: "desc",
   });
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
+  const [pendingDelete, setPendingDelete] = React.useState(null);
   const [showForm, setShowForm] = React.useState(false);
   const [editing, setEditing] = React.useState(null);
   const [showMeasure, setShowMeasure] = React.useState(false);
@@ -88,11 +103,9 @@ function App() {
     setEditing(null);
   };
 
-  const handleDelete = (entry) => {
-    if (window.confirm(t.confirmDelete)) {
-      dbDelete(entry.id).then(() => setEntries(prev => prev.filter(e => e.id !== entry.id)));
-    }
-  };
+  const handleDelete = (entry) => setPendingDelete(entry);
+
+  const handleDeleteAll = () => setShowDeleteConfirm(true);
 
   const handleExportData = () => exportJSON(entries);
 
@@ -162,10 +175,12 @@ function App() {
       <div className="fab-stack">
         <TopMenu lang={lang} onChangeLang={changeLang}
                  showPul={showPul} onToggleShowPul={toggleShowPul}
+                 darkMode={darkMode} onToggleDarkMode={toggleDarkMode}
                  onShowMeasure={() => setShowMeasure(true)}
                  onExportPdf={() => setShowExport(true)}
                  onExportData={handleExportData}
                  onImportData={handleImportData}
+                 onDeleteAll={handleDeleteAll}
                  hasEntries={entries.length > 0} t={t} />
         {entries.length > 0 && (
           <button type="button" className="fab" onClick={openNew}
@@ -190,6 +205,20 @@ function App() {
       <CommentModal open={viewingComment !== null}
                     onClose={() => setViewingComment(null)}
                     comment={viewingComment || ""} t={t} />
+      <ConfirmModal open={pendingDelete !== null}
+                    onClose={() => setPendingDelete(null)}
+                    onConfirm={() => dbDelete(pendingDelete.id).then(() =>
+                      setEntries(prev => prev.filter(e => e.id !== pendingDelete.id))
+                    )}
+                    message={t.confirmDelete}
+                    confirmLabel={t.delete}
+                    t={t} />
+      <ConfirmModal open={showDeleteConfirm}
+                    onClose={() => setShowDeleteConfirm(false)}
+                    onConfirm={() => dbClear().then(() => setEntries([]))}
+                    message={t.confirmDeleteAll}
+                    confirmLabel={t.deleteAllData}
+                    t={t} />
     </div>
   );
 }
