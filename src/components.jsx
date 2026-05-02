@@ -49,6 +49,7 @@ function EntryFormModal({ open, onClose, onSave, editing, t, lang }) {
   const [dia, setDia] = React.useState("");
   const [pul, setPul] = React.useState("");
   const [comment, setComment] = React.useState("");
+  const [arrhythmia, setArrhythmia] = React.useState(false);
   const [err, setErr] = React.useState({});
 
   React.useEffect(() => {
@@ -60,11 +61,12 @@ function EntryFormModal({ open, onClose, onSave, editing, t, lang }) {
       setDia(String(editing.dia));
       setPul(editing.pul == null ? "" : String(editing.pul));
       setComment(editing.comment || "");
+      setArrhythmia(!!editing.arrhythmia);
     } else {
       const n = Date.now();
       setDate(toISODate(n));
       setTime(toISOTime(n));
-      setSys(""); setDia(""); setPul(""); setComment("");
+      setSys(""); setDia(""); setPul(""); setComment(""); setArrhythmia(false);
     }
     setErr({});
   }, [open, editing]);
@@ -94,6 +96,7 @@ function EntryFormModal({ open, onClose, onSave, editing, t, lang }) {
       dia: Number(dia),
       pul: pul === "" ? null : Number(pul),
       comment: comment.trim(),
+      arrhythmia: arrhythmia,
     });
     onClose();
   };
@@ -159,6 +162,12 @@ function EntryFormModal({ open, onClose, onSave, editing, t, lang }) {
             <textarea rows="2" value={comment} placeholder={t.placeholderComment}
                       onChange={(e) => setComment(e.target.value)}
                       className="input textarea" />
+          </label>
+
+          <label className="check-row">
+            <input type="checkbox" checked={arrhythmia}
+                   onChange={(e) => setArrhythmia(e.target.checked)} />
+            {t.arrhythmia}
           </label>
         </div>
 
@@ -387,6 +396,7 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, on
                     <div className="when-cat-mob">
                       <span className="cat-dot" style={{ background: cat.color }} />
                       <span style={{ color: cat.color }}>{t["cat_" + cat.key]}</span>
+                      {e.arrhythmia && <span className="arrhythmia-mark" title={t.arrhythmia}>!</span>}
                       {e.comment && (
                         <button type="button" className="comment-mark" title={t.viewComment} aria-label={t.viewComment}
                                 onClick={() => onShowComment(e.comment)}>
@@ -410,7 +420,12 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, on
                   </td>
                 )}
                 {showCategories && (
-                  <td className="col-cat"><CategoryBadge sys={e.sys} dia={e.dia} t={t} mode="badge" /></td>
+                  <td className="col-cat">
+                    <span className="cat-cell">
+                      <CategoryBadge sys={e.sys} dia={e.dia} t={t} mode="badge" />
+                      {e.arrhythmia && <span className="arrhythmia-mark" title={t.arrhythmia}>!</span>}
+                    </span>
+                  </td>
                 )}
                 <td className="td-comment col-comment">
                   <span title={e.comment}>{e.comment || <span className="dash">—</span>}</span>

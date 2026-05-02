@@ -95,6 +95,7 @@ const I18N = {
     viewComment: "View comment",
     hasComment: "Has comment",
     showPul: "Show pulse",
+    arrhythmia: "Arrhythmia detected",
   },
   de: {
     appName: "Blutdruck Tagebuch",
@@ -189,6 +190,7 @@ const I18N = {
     viewComment: "Kommentar anzeigen",
     hasComment: "Hat einen Kommentar",
     showPul: "Puls anzeigen",
+    arrhythmia: "Herzrhythmusstörung erkannt",
   },
 };
 
@@ -411,6 +413,7 @@ function importJSON() {
             dia: e.dia,
             pul: typeof e.pul === "number" ? e.pul : null,
             comment: typeof e.comment === "string" ? e.comment : "",
+            arrhythmia: !!e.arrhythmia,
           }));
           if (!valid.length) return reject(new Error("no valid entries"));
           resolve(valid);

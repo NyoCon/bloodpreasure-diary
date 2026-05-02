@@ -686,6 +686,26 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
   border: 1px solid;
   white-space: nowrap;
 }
+.cat-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.arrhythmia-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--danger);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
 
 /* ── Empty state ─────────────────────────────────────────────────────── */
 .empty-state {
@@ -719,11 +739,12 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
   background: rgba(13, 13, 13, 0.32);
   backdrop-filter: blur(4px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 100;
   padding: 24px;
   animation: fade 0.15s ease-out;
+  overflow-y: auto;
 }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
@@ -850,7 +871,6 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 14px;
   font-size: 13px;
   cursor: pointer;
   user-select: none;
