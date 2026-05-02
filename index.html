@@ -85,6 +85,7 @@
         navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
       } else {
         navigator.serviceWorker.register('/sw.js');
+        navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
       }
     }
   </script>
