@@ -2,6 +2,7 @@
   "name": "Blood Pressure Diary",
   "short_name": "BP Diary",
   "description": "Track and review your blood pressure measurements.",
+  "version": "1.0.0",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

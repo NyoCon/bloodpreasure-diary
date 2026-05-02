@@ -4,3 +4,6 @@ services:
     ports:
       - "8080:80"
     restart: unless-stopped
+    # Data is stored in the browser's IndexedDB — no server-side volume needed.
+    # To persist data across browser sessions or devices, use the JSON export
+    # in the app menu (⋮ → Export data).
