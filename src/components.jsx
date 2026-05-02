@@ -396,7 +396,17 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, on
                     <div className="when-cat-mob">
                       <span className="cat-dot" style={{ background: cat.color }} />
                       <span style={{ color: cat.color }}>{t["cat_" + cat.key]}</span>
-                      {e.arrhythmia && <span className="arrhythmia-mark" title={t.arrhythmia}>!</span>}
+                      {e.arrhythmia && (
+                          <>
+                            <span className="arrhythmia-mark" title={t.arrhythmia}>!</span>
+                            <svg className="arrhythmia-icon" width="13" height="13" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" strokeWidth="2.5"
+                                 strokeLinecap="round" strokeLinejoin="round"
+                                 title={t.arrhythmia}>
+                              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                          </>
+                        )}
                       {e.comment && (
                         <button type="button" className="comment-mark" title={t.viewComment} aria-label={t.viewComment}
                                 onClick={() => onShowComment(e.comment)}>
@@ -423,7 +433,17 @@ function EntriesTable({ entries, sortKey, sortDir, setSort, onEdit, onDelete, on
                   <td className="col-cat">
                     <span className="cat-cell">
                       <CategoryBadge sys={e.sys} dia={e.dia} t={t} mode="badge" />
-                      {e.arrhythmia && <span className="arrhythmia-mark" title={t.arrhythmia}>!</span>}
+                      {e.arrhythmia && (
+                          <>
+                            <span className="arrhythmia-mark" title={t.arrhythmia}>!</span>
+                            <svg className="arrhythmia-icon" width="13" height="13" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" strokeWidth="2.5"
+                                 strokeLinecap="round" strokeLinejoin="round"
+                                 title={t.arrhythmia}>
+                              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                          </>
+                        )}
                     </span>
                   </td>
                 )}
